@@ -56,7 +56,7 @@ class FirstFragment : Fragment() {
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
         lifecycleScope.launch{
-            val call = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java).getAllPokemon()
+            val call = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java).getAllPokemon("20","20")
             val pokemon = call.body()
             var patrones: String
             var urlImgenPokemon:String
