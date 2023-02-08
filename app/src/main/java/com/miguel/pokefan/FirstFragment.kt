@@ -1,6 +1,5 @@
 package com.miguel.pokefan
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,16 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.miguel.pokefan.APISERVER.APIServerPokeFan
 import com.miguel.pokefan.databinding.FragmentFirstBinding
 import com.miguel.pokefan.reclyclerview.pokemon
 import com.miguel.pokefan.utilidades.InstanciarRetrofit
 import com.miguel.pokefan.utilidades.obtenerNumero
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPokemonList1
 
 /**
