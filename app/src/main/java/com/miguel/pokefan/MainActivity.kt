@@ -1,5 +1,6 @@
 package com.miguel.pokefan
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,14 +11,18 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
+import com.miguel.pokefan.APISERVER.APIServerPokeFan
 import com.miguel.pokefan.databinding.ActivityMainBinding
+import com.miguel.pokefan.utilidades.InstanciarRetrofit
 import com.miguel.pokefan.utilidades.ThemesLightDark
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private var temas = ThemesLightDark()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
