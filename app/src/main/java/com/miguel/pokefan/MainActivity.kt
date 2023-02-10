@@ -17,7 +17,7 @@ import com.miguel.pokefan.utilidades.InstanciarRetrofit
 import com.miguel.pokefan.utilidades.ThemesLightDark
 import kotlinx.coroutines.*
 
-class MainActivity : AppCompatActivity() {
+    class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
