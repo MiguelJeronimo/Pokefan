@@ -2,6 +2,7 @@ package com.miguel.pokefan.reclyclerview.adapters
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,7 +12,17 @@ import com.miguel.pokefan.R
 import com.miguel.pokefan.reclyclerview.pokemon
 
 class AdapterPokemonList(private var items_pokemon: MutableList<pokemon> = ArrayList()):
-    RecyclerView.Adapter<AdapterPokemonList.ViewHolder> (){
+    RecyclerView.Adapter<AdapterPokemonList.ViewHolder>(), OnClickListener{
+    //implementacion del evento click del recyclerview en kotlin
+    lateinit var listener: OnClickListener
+    fun setOnclickListener(listener:OnClickListener){
+        this.listener = listener
+    }
+    override fun onClick(v: View?) {
+        if (listener!=null){
+            listener!!.onClick(v)
+        }
+    }
 
     class ViewHolder(view:View):RecyclerView.ViewHolder(view){
         var imgPokemon: ImageView
@@ -25,8 +36,9 @@ class AdapterPokemonList(private var items_pokemon: MutableList<pokemon> = Array
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val vista = LayoutInflater.from(parent.context)
-        return ViewHolder(vista.inflate(R.layout.recyclerview_pokemons, parent, false))
+        val vista = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_pokemons, parent, false)
+        vista.setOnClickListener(this)
+        return ViewHolder(vista)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -39,6 +51,8 @@ class AdapterPokemonList(private var items_pokemon: MutableList<pokemon> = Array
     override fun getItemCount(): Int {
         return  items_pokemon.size
     }
+
+
 
 }
 

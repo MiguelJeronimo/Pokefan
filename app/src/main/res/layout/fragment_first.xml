@@ -30,8 +30,8 @@
             android:layout_margin="5dp"
             android:singleLine="true"
             android:imeOptions="actionDone"
-            android:drawableLeft="@android:drawable/ic_menu_search"
-            android:hint="Buscar pokemón" />
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:hint="Pokemón" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -1,5 +1,6 @@
 package com.miguel.pokefan
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.view.children
+import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.miguel.pokefan.APISERVER.APIServerPokeFan
@@ -129,6 +132,7 @@ class FirstFragment : Fragment() {
             }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun RecyclerView (items_pokemon: MutableList<pokemon>){
         val linearLayout = LinearLayoutManager(context)
         linearLayout.orientation = LinearLayoutManager.VERTICAL
@@ -136,6 +140,11 @@ class FirstFragment : Fragment() {
         binding.recyclerviewPokemon.hasFixedSize()
         val adapterPokemonList = AdapterPokemonList1(items_pokemon)
         binding.recyclerviewPokemon.adapter =  adapterPokemonList
+        adapterPokemonList.setOnclickListener(
+            View.OnClickListener {
+                Toast.makeText(context,"Funciona ::V",Toast.LENGTH_SHORT).show()
+            }
+        )
         adapterPokemonList.notifyDataSetChanged()
     }
 

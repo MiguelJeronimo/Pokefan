@@ -9,7 +9,6 @@
         android:layout_width="390dp"
         android:layout_height="150dp"
         android:layout_marginTop="10dp"
-        android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="10dp"
