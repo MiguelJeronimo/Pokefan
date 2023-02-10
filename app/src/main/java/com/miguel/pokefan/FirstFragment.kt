@@ -42,14 +42,17 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch { llenarRecyclerView("0") }
         binding.buttonAdelante.setOnClickListener {
-            println("RANGOCLICK: "+rangoMayor)
-            llenarRecyclerView(rangoMayor.toString())
+            if(rangoMayor!=null){
+                llenarRecyclerView(rangoMayor.toString())
+            } else{
+                Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
+            }
+
 
         }
         binding.buttonAtras.setOnClickListener {
             if (rangoMenor!=null){
                 llenarRecyclerView(rangoMenor.toString())
-
             } else{
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
@@ -65,6 +68,9 @@ class FirstFragment : Fragment() {
     private fun llenarRecyclerView(rango:String){
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
+        binding.shimmerViewContainer.startShimmer()
+        binding.shimmerViewContainer.visibility = View.VISIBLE
+        binding.recyclerviewPokemon.visibility = View.GONE
         lifecycleScope.launch{
             val call = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java).getAllPokemon(rango,"20")
             val pokemon = call.body()
@@ -79,7 +85,6 @@ class FirstFragment : Fragment() {
                     patrones = obtenerNumero(pokes[i].url)
                     val namePokemon = pokes[i].name
                     pokemonAlternative(pokes[i].name)
-                    println("URL: "+pokemonStatusImage.getPokemonUrl())
                     // Validando el valor de la variable urlPokoemon
                         urlImgenPokemon = if (pokemonStatusImage.getPokemonUrl() != "null"){
                             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${patrones}.png"
@@ -92,6 +97,9 @@ class FirstFragment : Fragment() {
                         patrones
                     ))
                 }
+                binding.shimmerViewContainer.visibility = View.GONE
+                binding.recyclerviewPokemon.visibility = View.VISIBLE
+                binding.shimmerViewContainer.stopShimmer()
                 val linearLayout = LinearLayoutManager(context)
                    linearLayout.orientation = LinearLayoutManager.VERTICAL
                    binding.recyclerviewPokemon.layoutManager = linearLayout
