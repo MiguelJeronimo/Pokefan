@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import com.miguel.pokefan.databinding.FragmentFirstBinding
 import com.miguel.pokefan.reclyclerview.pokemon
 import com.miguel.pokefan.utilidades.*
 import kotlinx.coroutines.*
+import kotlin.collections.ArrayList
 import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPokemonList1
 
 /**
@@ -47,8 +49,6 @@ class FirstFragment : Fragment() {
             } else{
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
-
-
         }
         binding.buttonAtras.setOnClickListener {
             if (rangoMenor!=null){
@@ -57,7 +57,31 @@ class FirstFragment : Fragment() {
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
         }
+        //implementacion de la busqueda del pokemon
+        binding.txtBuscarPokemon.setOnEditorActionListener { v, actionId, event ->
+            val busqueda = Busquedas()
+            val txtBuscarPokemon = binding.txtBuscarPokemon
+            val layoutBuscarPokemon = binding.layoutBuscarPokemon
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                val pokemon = txtBuscarPokemon.text
+                layoutBuscarPokemon.error = null
+                if (pokemon?.isEmpty() == false) {
+                    layoutBuscarPokemon.error = null
+                    //la data siempre debe ir en minusculas
+                    lifecycleScope.launch {
+                        busqueda.BuscarPokemon(pokemon.toString().lowercase(),txtBuscarPokemon,layoutBuscarPokemon)
+                        val arrayDePokemon = busqueda.ArrayAdapterPokemon()
+                        RecyclerView(arrayDePokemon)
+                    }
 
+                } else {
+                    binding.layoutBuscarPokemon.error = null
+                    binding.layoutBuscarPokemon.clearFocus()
+                    llenarRecyclerView(rangoMenor.toString())
+                }
+            }
+            false
+        }
     }
 
     override fun onDestroyView() {
@@ -100,24 +124,26 @@ class FirstFragment : Fragment() {
                 binding.shimmerViewContainer.visibility = View.GONE
                 binding.recyclerviewPokemon.visibility = View.VISIBLE
                 binding.shimmerViewContainer.stopShimmer()
-                val linearLayout = LinearLayoutManager(context)
-                   linearLayout.orientation = LinearLayoutManager.VERTICAL
-                   binding.recyclerviewPokemon.layoutManager = linearLayout
-                   binding.recyclerviewPokemon.hasFixedSize()
-                   val adapterPokemonList = AdapterPokemonList1(items_pokemon)
-                   binding.recyclerviewPokemon.adapter =  adapterPokemonList
+                RecyclerView (items_pokemon)
                }
             }
     }
-        //}
+
+    private fun RecyclerView (items_pokemon: MutableList<pokemon>){
+        val linearLayout = LinearLayoutManager(context)
+        linearLayout.orientation = LinearLayoutManager.VERTICAL
+        binding.recyclerviewPokemon.layoutManager = linearLayout
+        binding.recyclerviewPokemon.hasFixedSize()
+        val adapterPokemonList = AdapterPokemonList1(items_pokemon)
+        binding.recyclerviewPokemon.adapter =  adapterPokemonList
+        adapterPokemonList.notifyDataSetChanged()
+    }
 
     /**
      * @param namePokemon -> Nombre de pokemon
      * @return true -> si existe
      * -> false si no existe la imagen de pokemon Go
      * */
-
-
     private suspend fun pokemonAlternative(namePokemon: String) {
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
