@@ -11,11 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.miguel.pokefan.APISERVER.APIServerPokeFan
 import com.miguel.pokefan.databinding.FragmentFirstBinding
 import com.miguel.pokefan.reclyclerview.pokemon
-import com.miguel.pokefan.utilidades.InstanciarRetrofit
-import com.miguel.pokefan.utilidades.obtenerNumero
-import com.miguel.pokefan.utilidades.obtenerRangoMayor
-import com.miguel.pokefan.utilidades.obtenerRangoMenor
-import kotlinx.coroutines.launch
+import com.miguel.pokefan.utilidades.*
+import kotlinx.coroutines.*
 import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPokemonList1
 
 /**
@@ -26,6 +23,7 @@ class FirstFragment : Fragment() {
     private var _binding: FragmentFirstBinding? = null
     var rangoMayor: String? = null
     var rangoMenor: String? = null
+    var pokemonStatusImage = PokemonStatusImage()
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -42,14 +40,16 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        llenarRecyclerView("0")
+        lifecycleScope.launch { llenarRecyclerView("0") }
         binding.buttonAdelante.setOnClickListener {
             println("RANGOCLICK: "+rangoMayor)
             llenarRecyclerView(rangoMayor.toString())
+
         }
         binding.buttonAtras.setOnClickListener {
             if (rangoMenor!=null){
                 llenarRecyclerView(rangoMenor.toString())
+
             } else{
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
@@ -77,26 +77,49 @@ class FirstFragment : Fragment() {
                 val items_pokemon: MutableList<pokemon> = ArrayList()
                 for (i in pokes?.indices!!){
                     patrones = obtenerNumero(pokes[i].url)
-                    urlImgenPokemon = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${patrones}.png"
-                    println(urlImgenPokemon)
+                    val namePokemon = pokes[i].name
+                    pokemonAlternative(pokes[i].name)
+                    println("URL: "+pokemonStatusImage.getPokemonUrl())
+                    // Validando el valor de la variable urlPokoemon
+                        urlImgenPokemon = if (pokemonStatusImage.getPokemonUrl() != "null"){
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${patrones}.png"
+                        } else{
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${patrones}.png"
+                        }
                     items_pokemon.add(pokemon(
                         urlImgenPokemon,
-                        pokes[i].name,
+                        namePokemon,
                         patrones
                     ))
                 }
                 val linearLayout = LinearLayoutManager(context)
-                linearLayout.orientation = LinearLayoutManager.VERTICAL
-                binding.recyclerviewPokemon.layoutManager = linearLayout
-                binding.recyclerviewPokemon.hasFixedSize()
-                val adapterPokemonList = AdapterPokemonList1(items_pokemon)
-                binding.recyclerviewPokemon.adapter =  adapterPokemonList
+                   linearLayout.orientation = LinearLayoutManager.VERTICAL
+                   binding.recyclerviewPokemon.layoutManager = linearLayout
+                   binding.recyclerviewPokemon.hasFixedSize()
+                   val adapterPokemonList = AdapterPokemonList1(items_pokemon)
+                   binding.recyclerviewPokemon.adapter =  adapterPokemonList
+               }
             }
-        }
     }
+        //}
 
-    fun obtenerDataAlternativa(namePokemon: String){
+    /**
+     * @param namePokemon -> Nombre de pokemon
+     * @return true -> si existe
+     * -> false si no existe la imagen de pokemon Go
+     * */
+
+
+    private suspend fun pokemonAlternative(namePokemon: String) {
         val retrofit = InstanciarRetrofit()
+        val urlPokemon = "https://pokeapi.co/api/v2/"
+        val call =  retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
+            .getPokemon(namePokemon)
+        if (call.isSuccessful) {
+            val pokemon = call.body()
+            val urlimage = pokemon?.sprites?.other?.home
+            pokemonStatusImage.setPokemonUrl(urlimage?.front_default.toString())
+        }
     }
 
 }
