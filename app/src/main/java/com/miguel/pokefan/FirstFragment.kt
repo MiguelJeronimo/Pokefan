@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.core.view.children
-import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.miguel.pokefan.APISERVER.APIServerPokeFan
@@ -141,8 +139,10 @@ class FirstFragment : Fragment() {
         val adapterPokemonList = AdapterPokemonList1(items_pokemon)
         binding.recyclerviewPokemon.adapter =  adapterPokemonList
         adapterPokemonList.setOnclickListener(
-            View.OnClickListener {
-                Toast.makeText(context,"Funciona ::V",Toast.LENGTH_SHORT).show()
+            View.OnClickListener { view: View ->
+                val recyclerview = binding.recyclerviewPokemon.getChildAdapterPosition(view)
+                val ID = items_pokemon.get(recyclerview).pokemonId
+                Toast.makeText(context,"Funciona ::V ${ID}",Toast.LENGTH_SHORT).show()
             }
         )
         adapterPokemonList.notifyDataSetChanged()
