@@ -15,7 +15,7 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutCantidad"
+        android:id="@+id/layoutBuscarPokemon"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,12 +24,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtCantidad"
+            android:id="@+id/txtBuscarPokemon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:hint="Buscar pokemón"
-            />
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:hint="Buscar pokemón" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -41,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutCantidad"
+        app:layout_constraintTop_toBottomOf="@+id/layoutBuscarPokemon"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutCantidad"
+        app:layout_constraintTop_toBottomOf="@+id/layoutBuscarPokemon"
         tools:listitem="@layout/recyclerview_pokemons" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -80,7 +82,7 @@
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toStartOf="@+id/primera_division"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutCantidad"
+        app:layout_constraintTop_toBottomOf="@+id/layoutBuscarPokemon"
         app:srcCompat="@drawable/icon_flecha_izquierda"
         tools:ignore="ContentDescription" />
 
@@ -91,7 +93,7 @@
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/primera_division"
-        app:layout_constraintTop_toBottomOf="@+id/layoutCantidad"
+        app:layout_constraintTop_toBottomOf="@+id/layoutBuscarPokemon"
         app:srcCompat="@drawable/icon_flecha_derecha"
         tools:ignore="ContentDescription" />
 
