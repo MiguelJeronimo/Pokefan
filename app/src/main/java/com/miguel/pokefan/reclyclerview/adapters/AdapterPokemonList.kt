@@ -15,12 +15,22 @@ class AdapterPokemonList(private var items_pokemon: MutableList<pokemon> = Array
     RecyclerView.Adapter<AdapterPokemonList.ViewHolder>(), OnClickListener{
     //implementacion del evento click del recyclerview en kotlin
     lateinit var listener: OnClickListener
+    private var posicion: Int = 0
     fun setOnclickListener(listener:OnClickListener){
         this.listener = listener
     }
+
+    fun  getPosicion(): Int {
+        return posicion
+    }
+
+    fun setPosicion(posicion:Int){
+        this.posicion = posicion
+    }
+
     override fun onClick(v: View?) {
         if (listener!=null){
-            listener!!.onClick(v)
+            listener.onClick(v)
         }
     }
 
