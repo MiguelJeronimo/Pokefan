@@ -119,7 +119,6 @@ class FirstFragment : Fragment() {
     override fun onPause() {
         if (adapterPokemonList!=null){
             posicion = adapterPokemonList!!.getPosicion()
-            println("ESSTADO")
         }
         super.onPause()
         _binding = null
@@ -175,34 +174,29 @@ class FirstFragment : Fragment() {
         adapterPokemonList!!.setPosicion(posicion)
         recyclerView.adapter =  adapterPokemonList
         recyclerView.hasFixedSize()
-        adapterPokemonList!!.setOnclickListener(
-            View.OnClickListener { view: View ->
-                val recyclerview = binding.recyclerviewPokemon.getChildAdapterPosition(view)
-                val ID = items_pokemons.get(recyclerview).pokemonId
-                Toast.makeText(context,"Funciona ::V ${ID}",Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-                //EnviarDatosFragment(ID)
-            }                //items_pokemon.clear()
-
-        )
+        adapterPokemonList!!.setOnclickListener { view: View ->
+            val recyclerview = binding.recyclerviewPokemon.getChildAdapterPosition(view)
+            val ID = items_pokemons[recyclerview].pokemonId
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            EnviarDatosFragment(ID)
+        }
         adapterPokemonList!!.notifyDataSetChanged()
     }
 
-    /**@SuppressLint("CommitTransaction")
+
     fun EnviarDatosFragment(ID: String){
-        val secondFragment: SecondFragment? = null
-        val bundle: Bundle? = null
-        bundle?.putString("ID_Pokemon",ID)
-        secondFragment?.arguments = bundle
-        val transaction = parentFragmentManager
-        secondFragment?.let {
-            transaction.beginTransaction()
-                .replace(R.id.nav_host_fragment_content_main, it)
-                .addToBackStack(null)
-                .commit()
+        val secondFragment = SecondFragment()
+        val data = Bundle().apply {
+            putString("ID_Pokemon",ID)
         }
+        secondFragment.arguments = data
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_content_main, secondFragment)
+            .addToBackStack(null)
+            .commit()
     }
-*/
+
     /**
      * @param namePokemon -> Nombre de pokemon
      * @return true -> si existe
