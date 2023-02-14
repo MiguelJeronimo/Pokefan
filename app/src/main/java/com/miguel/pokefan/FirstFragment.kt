@@ -2,7 +2,6 @@ package com.miguel.pokefan
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -124,6 +123,7 @@ class FirstFragment : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun llenarRecyclerView(rango:String){
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
