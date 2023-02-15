@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
+import java.util.concurrent.Executors
 import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPokemonList1
 
 
@@ -59,7 +60,7 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        llenarRecyclerView("${rank}")
+        poolTrhead(rank)
         recyclerView = view.findViewById(R.id.recyclerviewPokemon)
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
@@ -71,7 +72,7 @@ class FirstFragment : Fragment() {
             if(rangoMayor!="null"){
                 //items_pokemon.clear()
                 rank = rangoMayor!!.toInt()
-                llenarRecyclerView(rangoMayor.toString())
+                poolTrhead(rank)
             } else{
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
@@ -80,7 +81,7 @@ class FirstFragment : Fragment() {
             if (rangoMenor!="null"){
                 //items_pokemon.clear()
                 rank = rangoMenor!!.toInt()
-                llenarRecyclerView(rangoMenor.toString())
+                poolTrhead(rank)
             } else{
                 Toast.makeText(context,"Ya no hay pokemon", Toast.LENGTH_LONG).show()
             }
@@ -135,9 +136,6 @@ class FirstFragment : Fragment() {
         val urlPokemon = "https://pokeapi.co/api/v2/"
         //lifecycleScope
         //CoroutineScope(Dispatchers.IO)
-        /*binding.shimmerViewContainer.startShimmer()
-        binding.shimmerViewContainer.visibility = View.VISIBLE
-        binding.recyclerviewPokemon.visibility = View.GONE*/
             val apiServerPokeFan = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
             val call  = apiServerPokeFan.getAllPokemon(rango,"50")
             call.enqueue(object : Callback<Pokemon>{
@@ -153,7 +151,6 @@ class FirstFragment : Fragment() {
                         for (i in pokes?.indices!!){
                             patrones = obtenerNumero(pokes[i].url)
                             val namePokemon = pokes[i].name
-                            println("nombre pokemon: ${namePokemon}")
                             pokemonAlternative(pokes[i].name)
                             // Validando el valor de la variable urlPokoemon
                             urlImgenPokemon = if (pokemonStatusImage.getPokemonUrl() != "null"){
@@ -167,9 +164,9 @@ class FirstFragment : Fragment() {
                                 patrones
                             ))
                         }
-                        /*binding.shimmerViewContainer.visibility = View.GONE
+                        binding.shimmerViewContainer.visibility = View.GONE
                         binding.recyclerviewPokemon.visibility = View.VISIBLE
-                        binding.shimmerViewContainer.stopShimmer()*/
+                        binding.shimmerViewContainer.stopShimmer()
                         RecyclerView (items_pokemon)
                     }
                 }
@@ -181,9 +178,9 @@ class FirstFragment : Fragment() {
             })
     }
 
-    fun poolThreads(rank:Int){
+    /*fun poolThreads(rank:Int){
         //val excecu
-    }
+    }*/
 
     @SuppressLint("NotifyDataSetChanged")
     private fun RecyclerView (items_pokemons: MutableList<pokemon>){
@@ -216,6 +213,14 @@ class FirstFragment : Fragment() {
             .commit()
     }
 
+    fun poolTrhead(rank: Int){
+        binding.shimmerViewContainer.startShimmer()
+        binding.shimmerViewContainer.visibility = View.VISIBLE
+        binding.recyclerviewPokemon.visibility = View.GONE
+        val executor = Executors.newFixedThreadPool(1)
+        executor.execute { llenarRecyclerView("${rank}") }
+    }
+
     /**
      * @param namePokemon -> Nombre de pokemon
      * @return true -> si existe
@@ -223,16 +228,22 @@ class FirstFragment : Fragment() {
      * */
     private fun pokemonAlternative(namePokemon: String) {
         val retrofit = InstanciarRetrofit()
-        CoroutineScope(Dispatchers.IO).launch {
-            val urlPokemon = "https://pokeapi.co/api/v2/"
-            val call =  retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
-                .getPokemon(namePokemon)
-            if (call.isSuccessful) {
-                val pokemon = call.body()
-                val urlimage = pokemon?.sprites?.other?.home
-                pokemonStatusImage.setPokemonUrl(urlimage?.front_default.toString())
+       // CoroutineScope(Dispatchers.IO).launch {
+        val urlPokemon = "https://pokeapi.co/api/v2/"
+        val apiServerPokeFan =  retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
+        val call = apiServerPokeFan.getPokemon(namePokemon)
+        call.enqueue(object: Callback<PokemonImgSprite>{
+            override fun onResponse(call: Call<PokemonImgSprite>, response: Response<PokemonImgSprite>, ) {
+                if (response.isSuccessful){
+                    val pokemon = response.body()
+                    val urlimage = pokemon?.sprites?.other?.home
+                    pokemonStatusImage.setPokemonUrl(urlimage?.front_default.toString())
+                }
             }
-        }
 
+            override fun onFailure(call: Call<PokemonImgSprite>, t: Throwable) {
+                Toast.makeText(context,t.message,Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

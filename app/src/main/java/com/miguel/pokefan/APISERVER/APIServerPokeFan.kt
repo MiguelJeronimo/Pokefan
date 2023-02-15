@@ -23,5 +23,5 @@ interface APIServerPokeFan {
     ): Call<Pokemon>
 
     @GET("pokemon/{pokemon}")
-    suspend fun getPokemon(@Path("pokemon")pokemon:String): Response<PokemonImgSprite>
+    fun getPokemon(@Path("pokemon")pokemon:String): Call<PokemonImgSprite>
 }
