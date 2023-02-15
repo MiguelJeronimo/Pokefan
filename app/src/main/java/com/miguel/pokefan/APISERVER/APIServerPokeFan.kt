@@ -17,10 +17,10 @@ interface APIServerPokeFan {
      * offset y limit -> pokemon/?offset=20&limit=20
      * */
     @GET("pokemon")
-    suspend fun getAllPokemon(
+    fun getAllPokemon(
         @Query("offset") min:String,
         @Query("limit") max:String
-    ): Response<Pokemon>
+    ): Call<Pokemon>
 
     @GET("pokemon/{pokemon}")
     suspend fun getPokemon(@Path("pokemon")pokemon:String): Response<PokemonImgSprite>

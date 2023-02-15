@@ -12,12 +12,12 @@ fun obtenerNumero(url: String): String {
 //https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20
 fun obtenerRangoMayor(url: String): String {
     val quitarRangoMenor = url.replace("https://pokeapi.co/api/v2/pokemon?offset=","")
-    val quitarQuerys = quitarRangoMenor.replace("&limit=20","")
+    val quitarQuerys = quitarRangoMenor.replace("&limit=50","")
     return quitarQuerys
 }
 fun obtenerRangoMenor(url:String): String {
     val quitarRangoMenor = url.replace("https://pokeapi.co/api/v2/pokemon?offset=","")
-    val quitarQuerys = quitarRangoMenor.replace("&limit=20","")
+    val quitarQuerys = quitarRangoMenor.replace("&limit=50","")
     return quitarQuerys
 }
 
