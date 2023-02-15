@@ -54,7 +54,10 @@ class AdapterPokemonList(private var items_pokemon: MutableList<pokemon> = Array
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
        holder.textViewID.text = items_pokemon[position].pokemonId
        val urlIMG = items_pokemon[position].urlPokemon
-       Glide.with(holder.imgPokemon.context).load(urlIMG).error(R.drawable.icon_flecha_derecha).into(holder.imgPokemon)
+       Glide.with(holder.imgPokemon.context)
+           .load(urlIMG)
+           .error(com.google.android.material.R.drawable.mtrl_ic_error)
+           .into(holder.imgPokemon)
        holder.textViewName.text = items_pokemon[position].pokemonName
     }
 

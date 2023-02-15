@@ -14,11 +14,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.miguel.pokefan.APISERVER.APIServerPokeFan
+import com.miguel.pokefan.APISERVER.Models.Pokemon
+import com.miguel.pokefan.APISERVER.Models.PokemonImgSprite
 import com.miguel.pokefan.databinding.FragmentFirstBinding
 import com.miguel.pokefan.reclyclerview.pokemon
 import com.miguel.pokefan.utilidades.*
 import com.miguel.pokefan.viewmodels.ViewModelRecyclerView
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.callbackFlow
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.Callback
 import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPokemonList1
 
 
@@ -62,7 +68,7 @@ class FirstFragment : Fragment() {
         }
 
         binding.buttonAdelante.setOnClickListener {
-            if(rangoMayor!=null){
+            if(rangoMayor!="null"){
                 //items_pokemon.clear()
                 rank = rangoMayor!!.toInt()
                 llenarRecyclerView(rangoMayor.toString())
@@ -71,7 +77,7 @@ class FirstFragment : Fragment() {
             }
         }
         binding.buttonAtras.setOnClickListener {
-            if (rangoMenor!=null){
+            if (rangoMenor!="null"){
                 //items_pokemon.clear()
                 rank = rangoMenor!!.toInt()
                 llenarRecyclerView(rangoMenor.toString())
@@ -99,7 +105,7 @@ class FirstFragment : Fragment() {
                 } else {
                     binding.layoutBuscarPokemon.error = null
                     binding.layoutBuscarPokemon.clearFocus()
-                    llenarRecyclerView(rangoMenor.toString())
+                    //llenarRecyclerView(rangoMenor.toString())
                 }
             }
             false
@@ -123,47 +129,60 @@ class FirstFragment : Fragment() {
         _binding = null
     }
 
-    @SuppressLint("SuspiciousIndentation")
+    //@SuppressLint("SuspiciousIndentation")
     private fun llenarRecyclerView(rango:String){
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
         //lifecycleScope
         //CoroutineScope(Dispatchers.IO)
-        binding.shimmerViewContainer.startShimmer()
+        /*binding.shimmerViewContainer.startShimmer()
         binding.shimmerViewContainer.visibility = View.VISIBLE
-        binding.recyclerviewPokemon.visibility = View.GONE
-        lifecycleScope.launch{
-            val call = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java).getAllPokemon(rango,"20")
-            val pokemon = call.body()
-            var patrones: String
-            var urlImgenPokemon:String
-            rangoMayor = obtenerRangoMayor(pokemon?.next.toString())
-            rangoMenor = obtenerRangoMenor(pokemon?.previous.toString())
-            val items_pokemon: MutableList<pokemon> = ArrayList()
-                if (call.isSuccessful){
-                    val pokes = pokemon?.results
-                    for (i in pokes?.indices!!){
-                        patrones = obtenerNumero(pokes[i].url)
-                        val namePokemon = pokes[i].name
-                        pokemonAlternative(pokes[i].name)
-                        // Validando el valor de la variable urlPokoemon
-                        urlImgenPokemon = if (pokemonStatusImage.getPokemonUrl() != "null"){
-                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${patrones}.png"
-                        } else{
-                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${patrones}.png"
+        binding.recyclerviewPokemon.visibility = View.GONE*/
+            val apiServerPokeFan = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
+            val call  = apiServerPokeFan.getAllPokemon(rango,"50")
+            call.enqueue(object : Callback<Pokemon>{
+                override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
+                    if (response.isSuccessful){
+                        val pokemon = response.body()
+                        var patrones: String
+                        var urlImgenPokemon:String
+                        rangoMayor = obtenerRangoMayor(pokemon?.next.toString())
+                        rangoMenor = obtenerRangoMenor(pokemon?.previous.toString())
+                        val items_pokemon: MutableList<pokemon> = ArrayList()
+                        val pokes = pokemon?.results
+                        for (i in pokes?.indices!!){
+                            patrones = obtenerNumero(pokes[i].url)
+                            val namePokemon = pokes[i].name
+                            println("nombre pokemon: ${namePokemon}")
+                            pokemonAlternative(pokes[i].name)
+                            // Validando el valor de la variable urlPokoemon
+                            urlImgenPokemon = if (pokemonStatusImage.getPokemonUrl() != "null"){
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${patrones}.png"
+                            } else{
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${patrones}.png"
+                            }
+                            items_pokemon.add(pokemon(
+                                urlImgenPokemon,
+                                namePokemon,
+                                patrones
+                            ))
                         }
-                        items_pokemon.add(pokemon(
-                            urlImgenPokemon,
-                            namePokemon,
-                            patrones
-                        ))
+                        /*binding.shimmerViewContainer.visibility = View.GONE
+                        binding.recyclerviewPokemon.visibility = View.VISIBLE
+                        binding.shimmerViewContainer.stopShimmer()*/
+                        RecyclerView (items_pokemon)
                     }
-                    binding.shimmerViewContainer.visibility = View.GONE
-                    binding.recyclerviewPokemon.visibility = View.VISIBLE
-                    binding.shimmerViewContainer.stopShimmer()
-                    RecyclerView (items_pokemon)
                 }
-            }
+
+                override fun onFailure(call: Call<Pokemon>, t: Throwable) {
+                    Toast.makeText(context,t.message,Toast.LENGTH_LONG).show()
+                }
+
+            })
+    }
+
+    fun poolThreads(rank:Int){
+        //val excecu
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -216,5 +235,4 @@ class FirstFragment : Fragment() {
         }
 
     }
-
 }

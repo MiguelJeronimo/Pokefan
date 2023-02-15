@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.miguel.pokefan.databinding.FragmentSecondBinding
 import com.miguel.pokefan.utilidades.Busquedas
 import kotlinx.coroutines.*
@@ -44,6 +45,22 @@ class SecondFragment : Fragment() {
                 binding = binding,
                 context = requireContext()
             ) }
+            binding.switchShanyMode.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked){
+                    //modo shainy
+                    val urlshainy = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/${id_pokemon}.png"
+                    Glide.with(context)
+                        .load(urlshainy)
+                        .error(com.google.android.material.R.drawable.mtrl_ic_error)
+                        .into(binding.imageViewPokemon)
+                } else{
+                    val url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id_pokemon}.png"
+                    Glide.with(context)
+                        .load(url)
+                        .error(com.google.android.material.R.drawable.mtrl_ic_error)
+                        .into(binding.imageViewPokemon)
+                }
+            }
         }
     }
 
