@@ -34,13 +34,13 @@ import com.miguel.pokefan.reclyclerview.adapters.AdapterPokemonList as AdapterPo
  */
 @Suppress("DEPRECATION")
 class FirstFragment : Fragment() {
-
     private var _binding: FragmentFirstBinding? = null
     var rangoMayor: String? = null
     var rangoMenor: String? = null
     var pokemonStatusImage = PokemonStatusImage()
     var posicion = 0
     var rank: Int = 0
+    var obtenerLimit = ""
     private lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var recyclerView:RecyclerView
     //val items_pokemon: MutableList<pokemon> = ArrayList()
@@ -134,9 +134,13 @@ class FirstFragment : Fragment() {
     private fun llenarRecyclerView(rango:String){
         val retrofit = InstanciarRetrofit()
         val urlPokemon = "https://pokeapi.co/api/v2/"
-        //lifecycleScope
-        //CoroutineScope(Dispatchers.IO)
-            val apiServerPokeFan = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
+        val apiServerPokeFan = retrofit.getRetrofit(urlPokemon).create(APIServerPokeFan::class.java)
+        /*
+        * Validaremos si el limit de la url es diferente a 29 ya que en el ultimo rango solo retorna 29 elementos.
+        * y como 29 es meno al 50 que es el limite para que nos retorne 50 pokemons por paginación
+        * */
+
+       // val limite = if (obtenerLimit.toInt()==29)
             val call  = apiServerPokeFan.getAllPokemon(rango,"50")
             call.enqueue(object : Callback<Pokemon>{
                 override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
@@ -146,6 +150,8 @@ class FirstFragment : Fragment() {
                         var urlImgenPokemon:String
                         rangoMayor = obtenerRangoMayor(pokemon?.next.toString())
                         rangoMenor = obtenerRangoMenor(pokemon?.previous.toString())
+                        obtenerLimit = getLimit(pokemon?.next.toString(), rango)
+                        println("Limit: ${obtenerLimit} RangoMayor: ${rangoMayor}")
                         val items_pokemon: MutableList<pokemon> = ArrayList()
                         val pokes = pokemon?.results
                         for (i in pokes?.indices!!){
@@ -178,14 +184,8 @@ class FirstFragment : Fragment() {
             })
     }
 
-    /*fun poolThreads(rank:Int){
-        //val excecu
-    }*/
-
     @SuppressLint("NotifyDataSetChanged")
     private fun RecyclerView (items_pokemons: MutableList<pokemon>){
-        println("ENTRO AL RECYCLER")
-       // layoutManager.orie = LinearLayoutManager.VERTICAL
         adapterPokemonList = AdapterPokemonList1(items_pokemons)
         adapterPokemonList!!.setPosicion(posicion)
         recyclerView.adapter =  adapterPokemonList
