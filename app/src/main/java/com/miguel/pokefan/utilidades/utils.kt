@@ -21,3 +21,9 @@ fun obtenerRangoMenor(url:String): String {
     return quitarQuerys
 }
 
+fun getLimit(url:String, rank: String): String {
+    val limitRegex = Regex("limit=(\\d+)")
+    val matchResult = limitRegex.find(url)
+    return matchResult?.groups?.get(1)?.value.toString()
+}
+
